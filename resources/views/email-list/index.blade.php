@@ -7,7 +7,7 @@
 
     <x-card>
         @forelse ($emailLists as $list)
-
+            // Listas de emails
         @empty
             <div class="text-center">
                 <x-link-button :href="route('email-list.create')">
