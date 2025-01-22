@@ -7,12 +7,14 @@
 
     <x-card class="space-y-4">
         <div class="flex justify-between">
-            <x-link-button :href="route('subscribers.create', $emailList)">
+            <x-button.link :href="route('subscribers.create', $emailList)">
                 {{ __('Create a new subscriber') }}
-            </x-link-button>
+            </x-button.link>
 
-            <x-form :action="route('subscribers.index', $emailList)" class="w-2/5">
-                <x-text-input name="search" :placeholder="__('Search')" :value="$search" />
+            <x-form :action="route('subscribers.index', $emailList)" class="w-3/5 flex space-x-4 items-center" x-data x-ref="form" flat>
+                <x-input.checkbox name="showTrash" value="1" @click="$refs.form.submit()" :checked="$showTrash" :label="__('Show Deleted Records')" />
+
+                <x-input.text name="search" :placeholder="__('Search')" :value="$search" class="w-full" />
             </x-form>
         </div>
 
@@ -23,7 +25,15 @@
                         <x-table.td class="p-4">{{ $subscriber->id }}</x-table.td>
                         <x-table.td class="p-4">{{ $subscriber->name }}</x-table.td>
                         <x-table.td class="p-4">{{ $subscriber->email }}</x-table.td>
-                        <x-table.td class="p-4">//</x-table.td>
+                        <x-table.td class="p-4">
+                            @unless ($subscriber->trashed())
+                                <x-form :action="route('subscribers.destroy', [$emailList, $subscriber])" delete flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                    <x-button.secondary type="submit">{{ __('Delete') }}</x-button.secondary>
+                                </x-form>
+                            @else
+                                <x-badge danger>{{ __('Deleted') }}</x-badge>
+                            @endunless
+                        </x-table.td>
                     </tr>
                 @endforeach
             </x-slot>
