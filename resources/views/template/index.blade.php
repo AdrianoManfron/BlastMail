@@ -22,10 +22,11 @@
             <x-slot name="body">
                 @foreach ($templates as $template)
                     <tr>
-                        <x-table.td>{{ $template->id }}</x-table.td>
+                        <x-table.td class="w-1">{{ $template->id }}</x-table.td>
                         <x-table.td>{{ $template->name }}</x-table.td>
-                        <x-table.td class="flex items-center gap-2">
+                        <x-table.td class="flex items-center space-x-4 w-1">
                             @unless ($template->trashed())
+                                <x-button.link secondary :href="route('template.show', $template)">{{ __('Preview') }}</x-button.link>
                                 <x-button.link secondary :href="route('template.edit', $template)">{{ __('Edit') }}</x-button.link>
                                 <x-form :action="route('template.destroy', $template)" delete flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
                                     <x-button.secondary type="submit">{{ __('Delete') }}</x-button.secondary>
