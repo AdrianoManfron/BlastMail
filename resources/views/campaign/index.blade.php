@@ -30,7 +30,9 @@
                                     <x-button.secondary type="submit">{{ __('Delete') }}</x-button.secondary>
                                 </x-form>
                             @else
-                                <x-badge danger>{{ __('Deleted') }}</x-badge>
+                                <x-form :action="route('campaign.restore', $campaign)" patch flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                    <x-button.secondary danger type="submit">{{ __('Restore') }}</x-button.secondary>
+                                </x-form>
                             @endunless
                         </x-table.td>
                     </tr>

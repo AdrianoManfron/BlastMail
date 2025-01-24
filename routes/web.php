@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('template', TemplateController::class);
     Route::resource('campaign', CampaignController::class)->only(['index', 'create', 'destroy']);
+    Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
 });
 
 require __DIR__ . '/auth.php';
