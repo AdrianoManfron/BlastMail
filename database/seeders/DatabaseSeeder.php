@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use App\Models\EmailList;
 use App\Models\Subscriber;
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,18 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UserSeeder::class,
+            TemplateSeeder::class,
+            EmailListSeeder::class,
+            CampaignSeeder::class,
         ]);
-
-        EmailList::factory()->count(50)->create()
-            ->each(function (EmailList $list) {
-                Subscriber::factory()
-                    ->count(rand(50, 200))
-                    ->create(['email_list_id' => $list->id]);
-            });
     }
 }

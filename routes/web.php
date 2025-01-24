@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscriberController;
-use App\Http\Controllers\TemplateController;
 
 Route::view('/', 'welcome');
 
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/email-list/{emailList}/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
 
     Route::resource('template', TemplateController::class);
+    Route::resource('campaign', CampaignController::class)->only(['index', 'create', 'destroy']);
 });
 
 require __DIR__ . '/auth.php';
