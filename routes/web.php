@@ -25,7 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/email-list/{emailList}/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
 
     Route::resource('template', TemplateController::class);
-    Route::resource('campaign', CampaignController::class)->only(['index', 'create', 'destroy']);
+    Route::resource('campaign', CampaignController::class)->only(['index', 'destroy']);
+    Route::get('/campaign/create/{tab?}', [CampaignController::class, 'create'])->name('campaign.create');
+    Route::post('/campaign/create/{tab?}', [CampaignController::class, 'store']);
     Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
 });
 
