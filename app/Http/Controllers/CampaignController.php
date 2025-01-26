@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CampaignStoreRequest;
 use App\Models\Campaign;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
 class CampaignController extends Controller
@@ -26,30 +26,38 @@ class CampaignController extends Controller
 
     public function create(?string $tab = null)
     {
+        //session()->forget('campaign::create');
+
         return view('campaign.create', [
             'tab' => $tab,
             'form' => match ($tab) {
                 'template' => '_template',
                 'schedule' => '_schedule',
                 default => '_config',
-            }
+            },
+            'data' => session()->get('campaign::create', [
+                'name' => null,
+                'subject' => null,
+                'email_list_id' => null,
+                'template_id' => null,
+                'body' => null,
+                'track_click' => null,
+                'track_open' => null,
+                'send_at' => null,
+            ]),
         ]);
     }
 
-    public function store(?string $tab = null)
+    public function store(CampaignStoreRequest $request, ?string $tab = null)
     {
-        if (blank($tab)) {
-            $data = request()->validate([
-                'name' => ['required', 'max:255'],
-                'subject' => ['required', 'max:40'],
-                'email_list_id' => ['nullable'],
-                'template_id' => ['nullable'],
-            ]);
+        $data = $request->getData();
+        $toRoute = $request->getToRoute();
 
-            session()->put('campaign::create', $data);
-
-            return to_route('campaign.create', ['tab' => 'template']);
+        if ($tab == 'schedule') {
+            Campaign::create($data);
         }
+
+        return response()->redirectTo($toRoute);
     }
 
     public function destroy(Campaign $campaign)
