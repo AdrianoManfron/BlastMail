@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Campaign;
+use App\Mail\EmailCampaign;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CampaignController;
@@ -7,9 +10,6 @@ use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CampaignCreateSessionControl;
-use App\Mail\EmailCampaign;
-use App\Models\Campaign;
-use Illuminate\Support\Facades\Mail;
 
 Route::view('/', 'welcome');
 
@@ -37,7 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
 
     Route::get('/campaign/{campaign}/emails', function (Campaign $campaign) {
-
+        foreach ($campaign->emailList->subscribers as $subscriber) {
+            Mail::to($subscriber->email)
+                ->later($campaign->send_at, new EmailCampaign($campaign));
+        }
 
         return (new EmailCampaign($campaign))->render();
     });
