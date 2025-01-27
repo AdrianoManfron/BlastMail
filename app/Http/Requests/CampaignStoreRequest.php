@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Template;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CampaignStoreRequest extends FormRequest
@@ -24,7 +25,8 @@ class CampaignStoreRequest extends FormRequest
             'track_click' => null,
             'track_open' => null,
             'send_at' => null,
-        ], request()->all());
+            'send_when' => null,
+        ], $this->all());
 
         if (blank($tab)) {
             $rules = [
@@ -42,9 +44,15 @@ class CampaignStoreRequest extends FormRequest
         }
 
         if ($tab == 'schedule') {
-            $rules = [
-                'send_at' => ['required', 'date'],
-            ];
+            if ($map['send_when'] == 'now') {
+                $map['send_at'] = now()->format('Y-m-d');
+            } elseif ($map['send_when'] == 'later') {
+                $rules = [
+                    'send_at' => ['required', 'date', 'after:today'],
+                ];
+            } else {
+                $rules = ['send_when' => ['required']];
+            }
         }
 
         // --
@@ -61,6 +69,11 @@ class CampaignStoreRequest extends FormRequest
         }
         // --
 
+        if ($templateId = $session['template_id'] && blank($session['body'])) {
+            $template = Template::find($templateId);
+            $session['body'] = $template->body;
+        }
+
         session()->put('campaign::create', $session);
 
         return $rules;
@@ -71,6 +84,7 @@ class CampaignStoreRequest extends FormRequest
         $session = session()->get('campaign::create');
 
         unset($session['_token']);
+        unset($session['send_when']);
 
         $session['track_click'] = $session['track_click'] ?: false;
         $session['track_open'] = $session['track_open'] ?: false;
