@@ -7,7 +7,9 @@ use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CampaignCreateSessionControl;
-
+use App\Mail\EmailCampaign;
+use App\Models\Campaign;
+use Illuminate\Support\Facades\Mail;
 
 Route::view('/', 'welcome');
 
@@ -33,6 +35,12 @@ Route::middleware('auth')->group(function () {
         ->name('campaign.create');
     Route::post('/campaign/create/{tab?}', [CampaignController::class, 'store']);
     Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
+
+    Route::get('/campaign/{campaign}/emails', function (Campaign $campaign) {
+
+
+        return (new EmailCampaign($campaign))->render();
+    });
 });
 
 require __DIR__ . '/auth.php';
