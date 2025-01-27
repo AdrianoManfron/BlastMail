@@ -1,14 +1,14 @@
 <div class="flex flex-col gap-4">
     <x-alert success :title="__('Your campaign is ready to be send!')" />
 
-    <div>
-        <div>De: ----@---.com</div>
-        <div>Para: #count de emails do email_list_id</div>
-        <div>Assunto: {{ $data['subject'] }}</div>
-        <div>Template: #templates</div>
+    <div class="space-y-1">
+        <div>{{ __('From') }}: {{ config('mail.from.address') }}</div>
+        <div>{{ __('To') }}: <x-badge>{{ $countEmails }} emails</x-badge></div>
+        <div>{{ __('Subject') }}: {{ $data['subject'] }}</div>
+        <div>{{ __('Template') }}: <x-badge>{{ $template }}</x-badge></div>
     </div>
 
-    <hr />
+    <hr class="my-3 opacity-20" />
 
     <div x-data="{ show: '{{ data_get($data, "send_when") }}' }">
         <x-input-label :value="__('Schedule Delivery')" />
