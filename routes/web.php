@@ -29,21 +29,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/email-list/{emailList}/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
 
     Route::resource('template', TemplateController::class);
-    Route::resource('campaign', CampaignController::class)->only(['index', 'destroy']);
+
+    Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
+    Route::get('/campaign/{campaign}/{what?}', [CampaignController::class, 'show'])->name('campaign.show');
+
     Route::get('/campaign/create/{tab?}', [CampaignController::class, 'create'])
         ->middleware(CampaignCreateSessionControl::class)
         ->name('campaign.create');
     Route::post('/campaign/create/{tab?}', [CampaignController::class, 'store']);
     Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
 
-    Route::get('/campaign/{campaign}/emails', function (Campaign $campaign) {
-        foreach ($campaign->emailList->subscribers as $subscriber) {
-            Mail::to($subscriber->email)
-                ->later($campaign->send_at, new EmailCampaign($campaign));
-        }
-
-        return (new EmailCampaign($campaign))->render();
-    });
+    Route::delete('/campaign/{campaign}', [CampaignController::class, 'destroy'])->name('campaign.destroy');
 });
 
 require __DIR__ . '/auth.php';

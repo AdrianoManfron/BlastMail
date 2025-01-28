@@ -23,7 +23,9 @@
                 @foreach ($campaigns as $campaign)
                     <tr>
                         <x-table.td class="w-1">{{ $campaign->id }}</x-table.td>
-                        <x-table.td>{{ $campaign->name }}</x-table.td>
+                        <x-table.td>
+                            <a href="{{ route('campaign.show', $campaign) }}" class="hover:underline">{{ $campaign->name }}</a>
+                        </x-table.td>
                         <x-table.td class="flex items-center space-x-4 w-1">
                             @unless ($campaign->trashed())
                                 <x-form :action="route('campaign.destroy', $campaign)" delete flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
