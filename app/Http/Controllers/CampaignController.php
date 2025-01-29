@@ -39,10 +39,9 @@ class CampaignController extends Controller
 
         abort_unless(in_array($what, ['statistics', 'open', 'clicked']), 404);
 
-        return view('campaign.show', [
-            'campaign' => $campaign,
-            'what' => $what,
-        ]);
+        $search = request()->search;
+
+        return view('campaign.show', compact('campaign', 'what', 'search'));
     }
 
     public function create(?string $tab = null)

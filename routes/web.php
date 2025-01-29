@@ -31,14 +31,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('template', TemplateController::class);
 
     Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
-    Route::get('/campaign/{campaign}/{what?}', [CampaignController::class, 'show'])->name('campaign.show');
-
     Route::get('/campaign/create/{tab?}', [CampaignController::class, 'create'])
         ->middleware(CampaignCreateSessionControl::class)
         ->name('campaign.create');
     Route::post('/campaign/create/{tab?}', [CampaignController::class, 'store']);
-    Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
+    Route::get('/campaign/{campaign}/{what?}', [CampaignController::class, 'show'])->name('campaign.show');
 
+    Route::patch('/campaign/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaign.restore');
     Route::delete('/campaign/{campaign}', [CampaignController::class, 'destroy'])->name('campaign.destroy');
 });
 
