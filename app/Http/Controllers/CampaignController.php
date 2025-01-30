@@ -34,6 +34,10 @@ class CampaignController extends Controller
 
     public function show(CampaignShowRequest $request, Campaign $campaign, ?string $what = null)
     {
+        if ($redirect = $request->checkWhat()) {
+            return $redirect;
+        }
+
         $search = request()->search;
 
         return view('campaign.show', compact('campaign', 'what', 'search'));
