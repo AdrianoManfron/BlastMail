@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\CampaignStoreRequest;
 use App\Jobs\SendEmailCampaign;
+use App\Models\CampaignMail;
 use Illuminate\Support\Traits\Conditionable;
 
 class CampaignController extends Controller
@@ -40,7 +41,20 @@ class CampaignController extends Controller
 
         $search = request()->search;
 
-        return view('campaign.show', compact('campaign', 'what', 'search'));
+        $query = $campaign
+            ->mails()
+            ->selectRaw('
+                count(subscriber_id) as total_subscriber
+                , sum(openings) as total_openings
+                , count(case when openings > 0 then subscriber_id end) as unique_openings
+                , round((cast(count(case when openings > 0 then subscriber_id end) as float) / cast(count(subscriber_id) as float)) * 100) as opening_rate
+                , sum(clicks) as total_clicks
+                , count(case when openings > 0 then subscriber_id end) as unique_clicks
+                , round((cast(count(case when clicks > 0 then subscriber_id end) as float) / cast(count(subscriber_id) as float)) * 100) as clicks_rate
+            ')
+            ->first();
+
+        return view('campaign.show', compact('campaign', 'what', 'search', 'query'));
     }
 
     public function create(?string $tab = null)
