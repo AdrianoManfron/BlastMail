@@ -18,16 +18,18 @@ Route::view('/', 'welcome');
 Route::view('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/mail', function () {
-    $campaign = Campaign::find(12);
+    $campaign = Campaign::find(11);
     $mail = $campaign->mails()->first();
+
     $mail = new EmailCampaign($campaign, $mail);
 
-    SendEmailCampaign::dispatchAfterResponse($campaign);
+    // SendEmailCampaign::dispatchAfterResponse($campaign);
 
     return $mail->render();
 });
 
 Route::get('/t/{mail}/o', [TrackingController::class, 'openings'])->name('tracking.openings');
+Route::get('/t/{mail}/c', [TrackingController::class, 'clicks'])->name('tracking.clicks');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
