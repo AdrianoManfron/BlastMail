@@ -13,25 +13,12 @@ use App\Http\Controllers\TrackingController;
 use App\Http\Middleware\CampaignCreateSessionControl;
 use App\Jobs\SendEmailCampaign;
 
-Route::view('/', 'welcome');
-
-Route::view('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/mail', function () {
-    $campaign = Campaign::find(11);
-    $mail = $campaign->mails()->first();
-
-    $mail = new EmailCampaign($campaign, $mail);
-
-    // SendEmailCampaign::dispatchAfterResponse($campaign);
-
-    return $mail->render();
-});
+Route::redirect('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/t/{mail}/o', [TrackingController::class, 'openings'])->name('tracking.openings');
 Route::get('/t/{mail}/c', [TrackingController::class, 'clicks'])->name('tracking.clicks');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -46,7 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('template', TemplateController::class);
 
-    Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
+    Route::get('/', [CampaignController::class, 'index'])->name('campaign.index');
     Route::get('/campaign/create/{tab?}', [CampaignController::class, 'create'])
         ->middleware(CampaignCreateSessionControl::class)
         ->name('campaign.create');
