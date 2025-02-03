@@ -59,7 +59,7 @@ class CampaignStoreRequest extends FormRequest
         $session = session('campaign::create', $map);
 
         foreach ($session as $key => $value) {
-            $newValue = data_get($map, $key);
+            $newValue = data_get($session, $key);
 
             if ($key == 'track_click' || $key == 'track_open') {
                 $session[$key] = $newValue;
