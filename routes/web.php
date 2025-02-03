@@ -9,11 +9,25 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\TrackingController;
 use App\Http\Middleware\CampaignCreateSessionControl;
+use App\Jobs\SendEmailCampaign;
 
 Route::view('/', 'welcome');
 
 Route::view('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/mail', function () {
+    $campaign = Campaign::find(12);
+    $mail = $campaign->mails()->first();
+    $mail = new EmailCampaign($campaign, $mail);
+
+    SendEmailCampaign::dispatchAfterResponse($campaign);
+
+    return $mail->render();
+});
+
+Route::get('/t/{mail}/o', [TrackingController::class, 'openings'])->name('tracking.openings');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
